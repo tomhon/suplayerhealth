@@ -118,7 +118,7 @@ questionsList[10] = 'What did you learn or improve? (text)';
 function logData (session, question, response) {
     // id is the timestamp
     var date = new Date();
-    this.id = date.getTime().toString(),
+    this.id = date.toISOString(),
     this.user = 'Admin',
     this.question = 'Bot Initialized',
     this.response = 'Successfully'
@@ -134,11 +134,11 @@ var textPromptOptions = { speak: questionsList[0], inputHint: builder.InputHint.
 
 console.log(numberPromptOptions);
 
-function logResponse (session, question, results) {
+function logResponse (session, question, response) {
         oLogData = new logData();
         oLogData.user = session.message.user.name;
         oLogData.question = question.slice(0,question.indexOf('?')+1);
-        oLogData.response = results.response;
+        oLogData.response = response;
         console.log('attempting write to docdb');
         getDBDocument(oLogData)
             .then(()  =>   console.log(oLogData))
@@ -161,62 +161,63 @@ server.post('/api/messages', connector.listen());
 var bot = new builder.UniversalBot(connector, [
     function (session) {
         session.send('Hi '+ session.message.user.name + '! Please answer a few questions about training today.');
+        logResponse(session, 'User Connected?', 'Successfully' );
         builder.Prompts.number( session, questionsList[0], numberPromptOptions );
         },
     function (session, results, next) {
-        logResponse(session, questionsList[0], results);
+        logResponse(session, questionsList[0], results.response);
         builder.Prompts.number( session, questionsList[1], numberPromptOptions );
         next();
     },
         function (session, results, next) {
-        logResponse(session, questionsList[1], results);
+        logResponse(session, questionsList[1], results.response);
         builder.Prompts.number( session, questionsList[2], numberPromptOptions );
         next();
     },
         function (session, results, next) {
-        logResponse(session, questionsList[2], results);
+        logResponse(session, questionsList[2], results.response);
         builder.Prompts.number( session, questionsList[3], numberPromptOptions );
         next();
     },
         function (session, results, next) {
-        logResponse(session, questionsList[3], results);
+        logResponse(session, questionsList[3], results.response);
         builder.Prompts.number( session, questionsList[4], numberPromptOptions );
         next();
     },
         function (session, results, next) {
-        logResponse(session, questionsList[4], results);
+        logResponse(session, questionsList[4], results.response);
         builder.Prompts.number( session, questionsList[5], numberPromptOptions );
         next();
     },
         function (session, results, next) {
-        logResponse(session, questionsList[5], results);
+        logResponse(session, questionsList[5], results.response);
         builder.Prompts.number( session, questionsList[6], numberPromptOptions );
         next();
     },
         function (session, results, next) {
-        logResponse(session, questionsList[6], results);
+        logResponse(session, questionsList[6], results.response);
         builder.Prompts.number( session, questionsList[7], numberPromptOptions );
         next();
     },
         function (session, results, next) {
-        logResponse(session, questionsList[7], results);
+        logResponse(session, questionsList[7], resresults.responseults);
         builder.Prompts.number( session, questionsList[8], numberPromptOptions );
         next();
     },
         function (session, results, next) {
-        logResponse(session, questionsList[8], results);
+        logResponse(session, questionsList[8], results.response);
         builder.Prompts.text( session, questionsList[9], textPromptOptions );
         next();
     },
         function (session, results, next) {
-        logResponse(session, questionsList[9], results);
+        logResponse(session, questionsList[9], results.response);
         builder.Prompts.text( session, questionsList[10], textPromptOptions );
         next();
     },
 
     function (session, results) {
         session.send('Thanks for all your answers. See you soon!');
-        logResponse(session, questionsList[10], results);
+        logResponse(session, questionsList[10], results.response);
         if (!results.response) {
             // exhausted attemps and no selection, start over
             session.send('Ooops! Too many attemps :( But don\'t worry, I\'m handling that exception and you can try again!');
