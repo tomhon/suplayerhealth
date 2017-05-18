@@ -1,0 +1,23 @@
+{
+  "name": "suplayerhealth",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomhon/suplayerhealth.git"
+  },
+  "author": "tomhon@hotmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tomhon/suplayerhealth/issues"
+  },
+  "homepage": "https://github.com/tomhon/suplayerhealth#readme",
+  "dependencies": {
+    "botbuilder": "^3.8.3",
+    "restify": "^4.3.0"
+  }
+}
