@@ -18,6 +18,8 @@
   "homepage": "https://github.com/tomhon/suplayerhealth#readme",
   "dependencies": {
     "botbuilder": "^3.8.3",
-    "restify": "^4.3.0"
+    "documentdb": "^1.12.0",
+    "restify": "^4.3.0",
+    "url": "^0.11.0"
   }
 }
