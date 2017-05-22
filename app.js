@@ -200,7 +200,7 @@ var bot = new builder.UniversalBot(connector, [
         next();
     },
         function (session, results, next) {
-        logResponse(session, questionsList[7], resresults.responseults);
+        logResponse(session, questionsList[7], results.response);
         builder.Prompts.number( session, questionsList[8], numberPromptOptions );
         next();
     },
