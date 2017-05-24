@@ -158,10 +158,20 @@ var connector = new builder.ChatConnector({
 server.post('/api/messages', connector.listen());
 
 // Receive messages from the user and respond by echoing each message back (prefixed with 'You said:')
-var bot = new builder.UniversalBot(connector, [
+var bot = new builder.UniversalBot(connector)
+var today = new Date().toLocaleDateString();
+bot.dialog('/', [
+    function (session, args, next) {
+        if (session.userData.lastSurveyDate === today) {
+            session.endDialog('You\'ve already given feedback on today\'s session. Thanks!');
+        } else {
+            next();
+        }
+    },
     function (session) {
         session.send('Hi '+ session.message.user.name + '! Please answer a few questions about training today.');
         logResponse(session, 'User Connected?', 'Successfully' );
+        session.userData.lastSurveyDate = today;
         builder.Prompts.number( session, questionsList[0], numberPromptOptions );
         },
     function (session, results, next) {
