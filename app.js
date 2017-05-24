@@ -103,15 +103,15 @@ function pushLogData (document) {
 
 // List the questions to be asked
 var questionsList = Array ();
-questionsList[0] = 'How are you feeling today? (1=Bad, 10=Amazing)';
-questionsList[1] = 'Team Enjoyment? (1=Bad, 10=Amazing)';
-questionsList[2] = 'Session Intensity? (1=Low, 10=High)';
-questionsList[3] = 'Freshness? (1=Low, 10=High)';
-questionsList[4] = 'Sleep Quality? (1=Low, 10=High)';
-questionsList[5] = 'Muscle Health? (1=Low, 10=High)';
-questionsList[6] = 'Happiness? (1=Low, 10=High)';
-questionsList[7] = 'Mood? (1=Bad, 10=Good)';
-questionsList[8] = 'Wellness? (1=Bad, 10=Good)';
+questionsList[0] = 'How are you feeling today? (10=Amazing, 1=Bad)';
+questionsList[1] = 'Team Enjoyment? (10=Amazing, 1=Bad)';
+questionsList[2] = 'Session Intensity? (10=High, 1=Low)';
+questionsList[3] = 'Freshness? (10=High, 1=Low)';
+questionsList[4] = 'Sleep Quality? (10=High, 1=Low)';
+questionsList[5] = 'Muscle Health? (10=High, 1=Low)';
+questionsList[6] = 'Happiness? (10=High, 1=Low)';
+questionsList[7] = 'Mood? (10=Good, 1=Bad)';
+questionsList[8] = 'Wellness? (10=Good, 1=Bad)';
 questionsList[9] = 'What was the objective of the Session? (text)';
 questionsList[10] = 'What did you learn or improve? (text)';
 
@@ -132,8 +132,6 @@ var numberPromptOptions = { speak: questionsList[0], inputHint: builder.InputHin
 var textPromptOptions = { speak: questionsList[0], inputHint: builder.InputHint.expectingInput,
                 maxRetries: 3, retryPrompt: 'Not a valid option'};
 
-console.log(numberPromptOptions);
-
 function logResponse (session, question, response) {
         oLogData = new logData();
         oLogData.user = session.message.user.name;
@@ -146,7 +144,6 @@ function logResponse (session, question, response) {
 
 
 }
-
 
 // Create chat connector for communicating with the Bot Framework Service
 var connector = new builder.ChatConnector({
