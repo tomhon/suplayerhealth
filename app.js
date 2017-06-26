@@ -115,7 +115,8 @@ questionsList[8] = 'Wellness? (10=Good, 1=Bad)';
 questionsList[9] = 'What was the objective of the Session? (text)';
 questionsList[10] = 'What did you learn or improve? (text)';
 
-function logData (session, question, response) {
+function logData () {
+// function logData (session, question, response) {
     // id is the timestamp
     var date = new Date();
     this.id = date.toISOString(),
@@ -126,10 +127,18 @@ function logData (session, question, response) {
 
 var logDataArray = Array();
 
-var numberPromptOptions = { speak: questionsList[0], inputHint: builder.InputHint.expectingInput,
+
+//additional inputHints not supported in botbuilder 3.4.4 - TODO put these back in 
+// var numberPromptOptions = { speak: questionsList[0], inputHint: builder.InputHint.expectingInput,
+//                 maxRetries: 3, minValue: 1, maxValue: 10, retryPrompt: 'Not a valid option'};
+
+// var textPromptOptions = { speak: questionsList[0], inputHint: builder.InputHint.expectingInput,
+//                 maxRetries: 3, retryPrompt: 'Not a valid option'};
+
+var numberPromptOptions = { 
                 maxRetries: 3, minValue: 1, maxValue: 10, retryPrompt: 'Not a valid option'};
 
-var textPromptOptions = { speak: questionsList[0], inputHint: builder.InputHint.expectingInput,
+var textPromptOptions = { 
                 maxRetries: 3, retryPrompt: 'Not a valid option'};
 
 function logResponse (session, question, response) {
@@ -140,7 +149,7 @@ function logResponse (session, question, response) {
         console.log('attempting write to docdb');
         getDBDocument(oLogData)
             .then(()  =>   console.log(oLogData))
-            .catch((error) => { exit(`Completed with error ${JSON.stringify(error)}`) });
+            .catch((error) => { console.log(`Completed with error ${JSON.stringify(error)}`) });
 
 
 }
@@ -159,7 +168,9 @@ var bot = new builder.UniversalBot(connector)
 var today = new Date().toLocaleDateString();
 bot.dialog('/', [
     function (session, args, next) {
-        if (session.userData.lastSurveyDate === today) {
+        if (session.userData.lastSurveyDate === false) {
+        //check for user already completed today's survey
+        // if (session.userData.lastSurveyDate === today) {
             session.endDialog('You\'ve already given feedback on today\'s session. Thanks!');
         } else {
             next();
@@ -171,55 +182,55 @@ bot.dialog('/', [
         session.userData.lastSurveyDate = today;
         builder.Prompts.number( session, questionsList[0], numberPromptOptions );
         },
-    function (session, results, next) {
+    function (session, results) {
         logResponse(session, questionsList[0], results.response);
         builder.Prompts.number( session, questionsList[1], numberPromptOptions );
-        next();
+        // next();
     },
-        function (session, results, next) {
+        function (session, results) {
         logResponse(session, questionsList[1], results.response);
         builder.Prompts.number( session, questionsList[2], numberPromptOptions );
-        next();
+        // next();
     },
-        function (session, results, next) {
+        function (session, results) {
         logResponse(session, questionsList[2], results.response);
         builder.Prompts.number( session, questionsList[3], numberPromptOptions );
-        next();
+        // next();
     },
         function (session, results, next) {
         logResponse(session, questionsList[3], results.response);
         builder.Prompts.number( session, questionsList[4], numberPromptOptions );
-        next();
+        // next();
     },
         function (session, results, next) {
         logResponse(session, questionsList[4], results.response);
         builder.Prompts.number( session, questionsList[5], numberPromptOptions );
-        next();
+        // next();
     },
         function (session, results, next) {
         logResponse(session, questionsList[5], results.response);
         builder.Prompts.number( session, questionsList[6], numberPromptOptions );
-        next();
+        // next();
     },
         function (session, results, next) {
         logResponse(session, questionsList[6], results.response);
         builder.Prompts.number( session, questionsList[7], numberPromptOptions );
-        next();
+        // next();
     },
         function (session, results, next) {
         logResponse(session, questionsList[7], results.response);
         builder.Prompts.number( session, questionsList[8], numberPromptOptions );
-        next();
+        // next();
     },
         function (session, results, next) {
         logResponse(session, questionsList[8], results.response);
         builder.Prompts.text( session, questionsList[9], textPromptOptions );
-        next();
+        // next();
     },
         function (session, results, next) {
         logResponse(session, questionsList[9], results.response);
         builder.Prompts.text( session, questionsList[10], textPromptOptions );
-        next();
+        // next();
     },
 
     function (session, results) {
@@ -227,7 +238,7 @@ bot.dialog('/', [
         logResponse(session, questionsList[10], results.response);
         if (!results.response) {
             // exhausted attemps and no selection, start over
-            session.send('Ooops! Too many attemps :( But don\'t worry, I\'m handling that exception and you can try again!');
+            session.send('Ooops! Too many attempts :( But don\'t worry, I\'m handling that exception and you can try again!');
             return session.endDialog();
         }
 
