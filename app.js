@@ -163,18 +163,48 @@ var connector = new builder.ChatConnector({
 // Listen for messages from users 
 server.post('/api/messages', connector.listen());
 
+var savedAddress;
+
 // Receive messages from the user and respond by echoing each message back (prefixed with 'You said:')
 var bot = new builder.UniversalBot(connector)
 var today = new Date().toLocaleDateString();
-bot.dialog('/', [
+
+function startProactiveDialog(addr) {
+  // set resume:false to resume at the root dialog
+  // else true to resume the previous dialog
+  bot.beginDialog(addr, "*:/survey", {}, { resume: true });  
+}
+
+
+bot.dialog('/', [ 
+    function(session, args) {
+        builder.Prompts.confirm(session, 'Would you like your name added to the Sports Science Survey list?');
+        },
+
+    function (session, results) {
+        console.log('Response is ', results.response);
+        if(results.response){
+            savedAddress = session.message.address;
+            console.log('Saved Address ', savedAddress);
+            session.endDialog('Great - Thanks! I\'ve added you to the list and you\'ll receive your first survey in the next few days');
+            }
+        else 
+            {
+              session.endDialog('OK, bye!');
+            }
+    }
+    ]);
+
+
+
+bot.dialog('/survey', [
     function (session, args, next) {
+        savedAddress = session.message.address;
         if (session.userData.lastSurveyDate === false) {
         //check for user already completed today's survey
         // if (session.userData.lastSurveyDate === today) {
             session.endDialog('You\'ve already given feedback on today\'s session. Thanks!');
-        } else {
-            next();
-        }
+        } 
     },
     function (session) {
         session.send('Hi '+ session.message.user.name + '! Please answer a few questions about training today.');
@@ -259,12 +289,26 @@ bot.dialog('/', [
     }
 ]);
 
+function sendProactiveMessage(addr) {
+  var msg = new builder.Message().address(addr);
+  msg.text('Hello, this is a notification');
+  msg.textLocale('en-US');
+  bot.send(msg);
+}
+
 
 // web interface
 server.get('/', restify.serveStatic({
  directory: __dirname,
  default: '/index.html',
 }));
+server.get('/api/CustomWebApi', (req, res, next) => {
+    startProactiveDialog(savedAddress);
+    // sendProactiveMessage(savedAddress);
+    res.send('triggered');
+    next();
+  }
+);
 
 initialLogEntry = new logData();
 
